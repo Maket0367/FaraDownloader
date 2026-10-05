@@ -24,20 +24,15 @@ import asyncio
 TOKEN = "8876599083:AAENDsfE2rfsEKMvigwQ5qlziHfkhk0BEmI"
 BOT_USERNAME = "@FaraDownloader_Bot"
 
-# آیدی کانال‌های اسپانسر
+# **فقط یک کانال اسپانسر** (آموزش و فروش کانفینگ)
 CHANNEL_1 = "@V2ray_company"
-CHANNEL_2 = "@RemixEmpire2026"
-
 CHANNEL_1_LINK = "https://t.me/V2ray_company"
-CHANNEL_2_LINK = "https://t.me/RemixEmpire2026"
-
 ADMIN_ID = "@My_admin1"
-
 
 # ==================== کیبوردها ====================
 def get_main_keyboard():
     keyboard = [
-        [KeyboardButton("📢 کانال‌های اسپانسر"), KeyboardButton("📞 ارتباط با ما")],
+        [KeyboardButton("📢 کانال اسپانسر"), KeyboardButton("📞 ارتباط با ما")],
         [KeyboardButton("📥 راهنمای دانلود")],
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -46,14 +41,13 @@ def get_main_keyboard():
 def get_join_keyboard():
     keyboard = [
         [InlineKeyboardButton("📢 آموزش و فروش کانفینگ", url=CHANNEL_1_LINK)],
-        [InlineKeyboardButton("🎵 امپراطور ریمیکس", url=CHANNEL_2_LINK)],
         [InlineKeyboardButton("✅ عضویت را تایید می‌کنم", callback_data="check_join")],
     ]
     return InlineKeyboardMarkup(keyboard)
 
 
 async def is_member(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
-    for channel in [CHANNEL_1, CHANNEL_2]:
+    for channel in [CHANNEL_1]:
         try:
             member = await context.bot.get_chat_member(chat_id=channel, user_id=user_id)
             if member.status not in ("member", "administrator", "creator"):
@@ -69,9 +63,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 با من می‌تونی **ریلز، پست، عکس، ویدیو و استوری** اینستاگرام رو دانلود کنی ⚡
 
-⚠️ برای استفاده حتماً عضو هر دو کانال اسپانسر شو:
+⚠️ برای استفاده حتماً عضو کانال اسپانسر شو:
+
 ۱. آموزش و فروش کانفینگ
-۲. امپراطور ریمیکس
 
 👇 اول عضو شو، بعد روی «عضویت را تایید می‌کنم» بزن"""
 
@@ -89,7 +83,7 @@ async def check_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 حالا لینک اینستاگرام رو بفرست:""", disable_web_page_preview=True)
     else:
-        await query.edit_message_text("""❌ هنوز عضو هر دو کانال نشدی!
+        await query.edit_message_text("""❌ هنوز عضو کانال اسپانسر نشدی!
 
 لطفاً اول عضو شو:""", reply_markup=get_join_keyboard())
 
@@ -140,7 +134,7 @@ async def download_instagram(url, status_msg, update):
                     await update.message.reply_photo(photo=f, caption=caption)
                 else:
                     await update.message.reply_video(video=f, caption=caption)
-            os.remove(file_path)
+            # فایل پاک نمی‌شود (کرش جلوگیری می‌شود)
         else:
             media_group = []
             for i, file_path in enumerate(downloaded_files[:10]):
@@ -158,7 +152,7 @@ async def download_instagram(url, status_msg, update):
 
     except Exception as e:
         await status_msg.edit_text("❌ خطا در دانلود! لینک رو چک کن.")
-        print(e)
+        print(f"Download Error: {e}")
 
 
 # ==================== هندلر پیام‌ها ====================
@@ -173,14 +167,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"📞 پشتیبانی: {ADMIN_ID}", reply_markup=get_main_keyboard())
         return
 
-    if text == "📢 کانال‌های اسپانسر":
-        await update.message.reply_text("۱. آموزش و فروش کانفینگ\n۲. امپراطور ریمیکس", reply_markup=get_join_keyboard())
+    if text == "📢 کانال اسپانسر":
+        await update.message.reply_text("۱. آموزش و فروش کانفینگ", reply_markup=get_join_keyboard())
         return
 
     if text == "📥 راهنمای دانلود":
         await update.message.reply_text(
             "📥 **راهنمای استفاده:**\n\n"
-            "۱. عضو هر دو کانال اسپانسر شو\n"
+            "۱. عضو کانال اسپانسر شو\n"
             "۲. لینک اینستاگرام رو بفرست\n\n"
             "✅ ریلز، پست، استوری، آلبوم\n"
             "📌 فقط لینک‌های عمومی کار می‌کنن.",
@@ -190,7 +184,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if not await is_member(user_id, context):
-        await update.message.reply_text("⚠️ عضو هر دو کانال شو!", reply_markup=get_join_keyboard())
+        await update.message.reply_text("⚠️ عضو کانال اسپانسر شو!", reply_markup=get_join_keyboard())
         return
 
     if "instagram.com" in text.lower() or "instagr.am" in text.lower():
