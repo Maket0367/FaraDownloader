@@ -24,6 +24,10 @@ import asyncio
 TOKEN = "8876599083:AAENDsfE2rfsEKMvigwQ5qlziHfkhk0BEmI"
 BOT_USERNAME = "@FaraDownloader_Bot"
 
+# آیدی عددی و یوزرنیم
+BOT_ID = 6783020291
+BOT_USERNAME = "@FaraDownloader_Bot"
+
 # **فقط یک کانال اسپانسر** (آموزش و فروش کانفینگ)
 CHANNEL_1 = "@V2ray_company"
 CHANNEL_1_LINK = "https://t.me/V2ray_company"
